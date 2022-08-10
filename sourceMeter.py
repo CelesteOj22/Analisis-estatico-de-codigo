@@ -1,44 +1,17 @@
-#from Servidor import IHerramienta
 import subprocess #para mandarle comandos a la consola
 import os
+from subprocess import check_output
+from IHerramienta import *
 
-from IHerramienta import IHerramienta
-"""
-class sourceMeter(IHerramienta):
-    sourceMeter: str
-    projectName: str
-    projectBaseDir: str
-    resultsDir: str
-    runFB: str
-    FBFileList: str
-    
-    def __init__ (self,sourceMeter: str, projectName: str, projectBaseDir: str, resultsDir: str, runFB: str,FBFileList: str):
-        self.sourceMeter=sourceMeter
-        self.projectName=projectName
-        self.projectBaseDir=projectBaseDir
-        self.resultsDir=resultsDir
-        self.runFB=runFB
-        self.FBFileList=FBFileList
-        
-    def analizar(self):
-        subprocess.run([self.sourceMeter, '- projectName =' + self.projectName, '- projectBaseDir ='+self.projectBaseDir,
-                        '- resultsDir =' + self.resultsDir, '- runFB =' + self.runFB,'- FBFileList =' + self.FBFileList])
-
-    """
 class SourceMeter(IHerramienta):
     def __init__(self, resultsDir: str):
         #self._projectBaseDir = projectBaseDir
         self._resultsDir = resultsDir
-        #self._runFB = runFB
-        #self._FBFileList = FBFileList
+        self._runFB = 'true'
+        self._FBFileList = 'filelist.txt'
 
-#projectName: str
-#projectBaseDir: str
-#resultsDir: str
-#runFB: str
-#FBFileList: str
 #SourceMeterJava - projectName = ckjm - 1.9 - projectBaseDir = D:\Celeste\LSI\GICS\ckjm - 1.9\src - resultsDir = Results - runFB = true - FBFileList = filelist.txt
-#sourcem= sourceMeter("SourceMeterJava","ckjm - 1.9","D:\Celeste\LSI\GICS\ckjm - 1.9\src","Results","true,"filelist.txt")
+
 
 
 
@@ -51,8 +24,15 @@ class SourceMeter(IHerramienta):
     #dir = D:/sonar/scripts
     def analizar1(self, source, projectName):
         sep = projectName.split(sep='\\')
-        projectKey = sep[4]
-        comando = 'cd ' + projectName + ' && ' + source +'- projectName =' + projectKey + '- projectBaseDir ='+projectName +'- resultsDir =' + self.resultsDir, '- runFB = true'+'- FBFileList = filelist.txt'
+        projectKey= sep[4]
+        comando = 'cd ' +projectName+' && '+source+' -projectName='+projectKey+' -projectBaseDir='+projectName+' -resultsDir='+self._resultsDir+' -runFB='+self._runFB+' -FBFileList='+self._FBFileList
+        #check_output(comando, shell=True)
+        #stdout = subprocess.run(comando, stdout=subprocess.PIPE, universal_newlines=True, check=True, text=True,shell=True).stdout
+        #print(stdout)
 
-
+        try:
+            stdout = subprocess.run(comando, stdout=subprocess.PIPE, universal_newlines=True, check=True, text=True,shell=True).stdout
+            print("El proyecto " + projectKey + " ha sido analizado con exito!")
+        except:
+            print("Ha ocurrido un error durante el analisis del proyecto "+projectKey)
 
